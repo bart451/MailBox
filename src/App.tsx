@@ -1,9 +1,10 @@
 import { Tabs, TabsList, TabsTrigger } from './components/ui/tabs'
 import { Card, CardContent } from './components/ui/card'
 import { Inbox, Mail, Star } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 
-const emails = [
+// Sample email data
+const emailList = [
   {
     id: 1,
     sender: 'GitHub',
@@ -25,39 +26,102 @@ const emails = [
     sender: 'Twitter',
     subject: 'Je hebt nieuwe meldingen',
     preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: false,
+    starred: false
+  },
+	  {
+    id:4,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: true,
+    starred: false
+  },
+	  {
+    id: 5,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: true,
+    starred: false
+  },
+	  {
+    id: 6,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: true,
+    starred: false
+  },
+	  {
+    id: 7,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: false,
+    starred: false
+  },
+	  {
+    id:8,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: false,
+    starred: true
+  },
+	  {
+    id: 9,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
+    read: true,
+    starred: false
+  },
+	{   
+	  id: 10,
+    sender: 'Twitter',
+    subject: 'Je hebt nieuwe meldingen',
+    preview: 'Bekijk wat er nu gebeurt op Twitter...',
     read: true,
     starred: false
   }
 ]
 
 function App() {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark' || 
-             (!localStorage.getItem('theme') && 
-              window.matchMedia('(prefers-color-scheme: dark)').matches)
-    }
-    return false
-  })
+  // Controleer of de donkere modus eerder is ingesteld
+  const checkDarkModePreference = () => {
+    const savedTheme = localStorage.getItem('theme')
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    return savedTheme === 'dark' || (!savedTheme && systemPrefersDark)
+  }
 
+  const [darkModeEnabled, setDarkModeEnabled] = useState(checkDarkModePreference())
+
+  // Pas de donkere modusklasse toe en sla de voorkeur op
   useEffect(() => {
-    if (isDark) {
+    if (darkModeEnabled) {
       document.documentElement.classList.add('dark')
       localStorage.setItem('theme', 'dark')
     } else {
       document.documentElement.classList.remove('dark')
       localStorage.setItem('theme', 'light')
     }
-  }, [isDark])
+  }, [darkModeEnabled])
+
+  // Schakelen tussen donkere en lichte modus
+  const toggleDarkMode = () => {
+    setDarkModeEnabled(!darkModeEnabled)
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Dark mode toggle button */}
       <button
-        onClick={() => setIsDark(!isDark)}
-        aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        onClick={toggleDarkMode}
+        aria-label={darkModeEnabled ? 'Switch to light mode' : 'Switch to dark mode'}
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200"
       >
-        {isDark ? (
+        {darkModeEnabled ? (
           <span className="text-yellow-300">☀️</span>
         ) : (
           <span className="text-gray-700">🌙</span>
@@ -65,6 +129,7 @@ function App() {
       </button>
 
       <div className="max-w-4xl mx-auto">
+        {/* Email tabs */}
         <Tabs defaultValue="inbox" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="inbox" className="flex items-center gap-2">
@@ -82,6 +147,7 @@ function App() {
           </TabsList>
         </Tabs>
 
+        {/* Email list */}
         <Card className="mt-4">
           <CardContent className="p-6">
             <div className="flex gap-2 mb-4">
@@ -98,7 +164,7 @@ function App() {
             </div>
 
             <div className="space-y-4">
-              {emails.map((email) => (
+              {emailList.map((email) => (
                 <div 
                   key={email.id} 
                   className={`p-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer ${!email.read ? 'border-l-4 border-blue-500' : ''}`}
